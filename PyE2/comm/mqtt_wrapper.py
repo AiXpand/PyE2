@@ -37,7 +37,24 @@ from ..const import COLORS, COMMS, BASE_CT, PAYLOAD_CT
 
 
 class MQTTWrapper(object):
+  dct_server_topic = {}
+
+  def __new__(cls, *args, **kwargs):
+    config = kwargs.get('config')
+    recv_channel_name = kwargs.get('recv_channel_name')
+    host = config.get('HOST')
+    port = config.get('PORT')
+    user = config.get('USER')
+    pwd = config.get('PASS')
+
+    dct_key = (host, port, user, pwd, recv_channel_name)
+
+    if dct_key not in cls.dct_server_topic:
+      cls.dct_server_topic[dct_key] = super(MQTTWrapper, cls).__new__(cls)
+    return cls.dct_server_topic[dct_key]
+
   def __init__(self,
+               *,
                log,
                config,
                recv_buff=None,
@@ -47,30 +64,42 @@ class MQTTWrapper(object):
                on_message=None,
                post_default_on_message=None,  # callback that gets called after custom or default rcv callback
                **kwargs):
-    self.log = log
-    self._config = config
-    self._recv_buff = recv_buff
-    self._mqttc = None
-    self._thread_name = None
-    self.connected = False
-    self.disconnected = False
-    self._send_to = None
-    self._nr_full_retries = 0
-    self.__nr_dropped_messages = 0
-    self._comm_type = comm_type
-    self.send_channel_name = send_channel_name
-    self.recv_channel_name = recv_channel_name
-    self._disconnected_log = deque(maxlen=10)
-    self._disconnected_counter = 0
-    self._custom_on_message = on_message
-    self._post_default_on_message = post_default_on_message
+    if not hasattr(self, 'first_init'):
+      super(MQTTWrapper, self).__init__(**kwargs)
+      self.first_init = True
+      self.log = log
+      self._config = config
+      self._lst_recv_buff = []
+      self._mqttc = None
+      self._thread_name = None
+      self.connected = False
+      self.subscribed = False
+      self.disconnected = False
+      self._send_to = None
+      self._nr_full_retries = 0
+      self.__nr_dropped_messages = 0
+      self._comm_type = comm_type
+      self.send_channel_name = send_channel_name
+      self.recv_channel_name = recv_channel_name
+      self._disconnected_log = deque(maxlen=10)
+      self._disconnected_counter = 0
+      self._lst_custom_on_message = []
+      self._lst_post_default_on_message = []
 
-    self.DEBUG = False
+      self.DEBUG = False
+      print("I got called!")
 
+    # add the buffer and callbacks to their appropiate lists
     if self.recv_channel_name is not None and on_message is None:
-      assert self._recv_buff is not None
+      assert recv_buff is not None
+      self._lst_recv_buff.append(recv_buff)
 
-    super(MQTTWrapper, self).__init__(**kwargs)
+    if self.recv_channel_name is not None and on_message is not None:
+      self._lst_custom_on_message.append(on_message)
+
+    if self.recv_channel_name is not None and post_default_on_message is not None:
+      self._lst_post_default_on_message.append(post_default_on_message)
+
     return
 
   def P(self, s, color=None, **kwargs):
@@ -214,114 +243,115 @@ class MQTTWrapper(object):
     return
 
   def _callback_on_message(self, client, userdata, message):
-    if self._custom_on_message is not None:
-      self._custom_on_message(client, userdata, message)
-    else:
-      try:
-        msg = message.payload.decode('utf-8')
-        self._recv_buff.append(msg)
-      except:
-        # DEBUG TODO: enable here a debug show of the message.payload if
-        # the number of dropped messages rises
-        # TODO: add also to ANY OTHER wrapper
-        self.__nr_dropped_messages += 1
+    for on_message in self._lst_custom_on_message:
+      on_message(client, userdata, message)
+    try:
+      msg = message.payload.decode('utf-8')
+      for buff in self._lst_recv_buff:
+        buff.append(msg)
+    except:
+      # DEBUG TODO: enable here a debug show of the message.payload if
+      # the number of dropped messages rises
+      # TODO: add also to ANY OTHER wrapper
+      self.__nr_dropped_messages += 1
     # now call the "post-process" callback
-    if self._post_default_on_message is not None:
-      self._post_default_on_message()
+    for post_default_on_message in self._lst_post_default_on_message:
+      post_default_on_message()
     return
 
   def get_connection_issues(self):
     return {x1: x2 for x1, x2 in self._disconnected_log}
 
   def server_connect(self, max_retries=5):
-    nr_retry = 1
-    has_connection = False
-    exception = None
-    sleep_iter = None
+    if not self.connected:
+      nr_retry = 1
+      has_connection = False
+      exception = None
+      sleep_iter = None
 
-    while nr_retry <= max_retries:
-      try:
-        client_uid = self.log.get_unique_id()
-        self._mqttc = mqtt.Client(
-          client_id=self.cfg_eeid + '_' + client_uid,
-          clean_session=False
-        )
+      while nr_retry <= max_retries:
+        try:
+          client_uid = self.log.get_unique_id()
+          self._mqttc = mqtt.Client(
+            client_id=self.cfg_eeid + '_' + client_uid,
+            clean_session=False
+          )
 
-        self._mqttc.username_pw_set(
-          username=self.cfg_user,
-          password=self.cfg_pass
-        )
+          self._mqttc.username_pw_set(
+            username=self.cfg_user,
+            password=self.cfg_pass
+          )
 
-        self._mqttc.on_connect = self._callback_on_connect
-        self._mqttc.on_disconnect = self._callback_on_disconnect
-        self._mqttc.on_message = self._callback_on_message
-        self._mqttc.on_publish = self._callback_on_publish
-        # TODO: more verbose logging including when there is no actual exception
-        self._mqttc.connect(host=self.cfg_host, port=self.cfg_port)
+          self._mqttc.on_connect = self._callback_on_connect
+          self._mqttc.on_disconnect = self._callback_on_disconnect
+          self._mqttc.on_message = self._callback_on_message
+          self._mqttc.on_publish = self._callback_on_publish
+          # TODO: more verbose logging including when there is no actual exception
+          self._mqttc.connect(host=self.cfg_host, port=self.cfg_port)
 
-        self._mqttc.loop_start()  # start loop in another thread
+          self._mqttc.loop_start()  # start loop in another thread
 
-        sleep_time = 0.01
-        max_sleep = 2
-        for sleep_iter in range(1, int(max_sleep / sleep_time) + 1):
-          sleep(sleep_time)
-          if self.connected:
-            break
-        # endfor
+          sleep_time = 0.01
+          max_sleep = 2
+          for sleep_iter in range(1, int(max_sleep / sleep_time) + 1):
+            sleep(sleep_time)
+            if self.connected:
+              break
+          # endfor
 
-        has_connection = self.connected
-      except Exception as e:
-        exception = e
-      # end try-except
+          has_connection = self.connected
+        except Exception as e:
+          exception = e
+        # end try-except
+
+        if has_connection:
+          break
+
+        nr_retry += 1
+      # endwhile
+
+      if hasattr(self._mqttc, '_thread') and self._mqttc._thread is not None:
+        comtype = self._comm_type[:7] if self._comm_type is not None else 'CUSTOM'
+        self._mqttc._thread.name = 'S_mqtt_' + comtype + '_' + client_uid
+        self._thread_name = self._mqttc._thread.name
 
       if has_connection:
-        break
+        msg = "MQTT conn ok by '{}' in {:.1f}s - {}:{}".format(
+          self._thread_name, sleep_iter * sleep_time, self.cfg_host, self.cfg_port
+        )
+        msg_type = PAYLOAD_CT.STATUS_TYPE.STATUS_NORMAL
+        self._nr_full_retries = 0
+        self.P(msg, color='g')
+      else:
+        reason = exception
+        if reason is None:
+          reason = " max retries in {:.1f}s".format(sleep_iter * sleep_time)
+        self._nr_full_retries += 1
+        msg = 'MQTT (Paho) conn to {}:{} failed after {} retr ({} trials) (reason:{})'.format(
+          self.cfg_host, self.cfg_port, nr_retry, self._nr_full_retries, reason
+        )
+        msg_type = PAYLOAD_CT.STATUS_TYPE.STATUS_EXCEPTION
+        self.P(msg, color='r')
+        # now register failure
+      # endif
 
-      nr_retry += 1
-    # endwhile
+      dct_ret = {
+        'has_connection': has_connection,
+        'msg': msg,
+        'msg_type': msg_type
+      }
 
-    if hasattr(self._mqttc, '_thread') and self._mqttc._thread is not None:
-      comtype = self._comm_type[:7] if self._comm_type is not None else 'CUSTOM'
-      self._mqttc._thread.name = 'S_mqtt_' + comtype + '_' + client_uid
-      self._thread_name = self._mqttc._thread.name
+      if self._mqttc is not None and not has_connection:
+        self.release()
 
-    if has_connection:
-      msg = "MQTT conn ok by '{}' in {:.1f}s - {}:{}".format(
-        self._thread_name, sleep_iter * sleep_time, self.cfg_host, self.cfg_port
-      )
-      msg_type = PAYLOAD_CT.STATUS_TYPE.STATUS_NORMAL
-      self._nr_full_retries = 0
-      self.P(msg, color='g')
-    else:
-      reason = exception
-      if reason is None:
-        reason = " max retries in {:.1f}s".format(sleep_iter * sleep_time)
-      self._nr_full_retries += 1
-      msg = 'MQTT (Paho) conn to {}:{} failed after {} retr ({} trials) (reason:{})'.format(
-        self.cfg_host, self.cfg_port, nr_retry, self._nr_full_retries, reason
-      )
-      msg_type = PAYLOAD_CT.STATUS_TYPE.STATUS_EXCEPTION
-      self.P(msg, color='r')
-      # now register failure
-    # endif
-
-    dct_ret = {
-      'has_connection': has_connection,
-      'msg': msg,
-      'msg_type': msg_type
-    }
-
-    if self._mqttc is not None and not has_connection:
-      self.release()
-
-    return dct_ret
+      return dct_ret
 
   def get_thread_name(self):
     return self._thread_name
 
   def subscribe(self, max_retries=5):
 
-    if self.recv_channel_name is None:
+    if self.recv_channel_name is None or self.subscribed:
       return
 
     nr_retry = 1
@@ -353,6 +383,8 @@ class MQTTWrapper(object):
       msg = "MQTT (Paho) subscribe to '{}' FAILED after {} retries (reason:{})".format(topic, max_retries, exception)
       msg_type = PAYLOAD_CT.STATUS_TYPE.STATUS_EXCEPTION
     # endif
+
+    self.subscribed = has_connection
 
     dct_ret = {
       'has_connection': has_connection,
