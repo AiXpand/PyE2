@@ -19,6 +19,8 @@ Copyright 2019-2022 Lummetry.AI (Knowledge Investment Group SRL). All Rights Res
 @description:
 """
 
+# TODO: for custom plugin, do the plugin verification locally too
+
 import os
 
 from ..utils.code import CodeUtils

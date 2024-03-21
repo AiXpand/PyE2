@@ -20,7 +20,6 @@ Copyright 2019-2022 Lummetry.AI (Knowledge Investment Group SRL). All Rights Res
 """
 
 from .generic_session import GenericSession
-from .logger import Logger
 from .payload import Payload
 from .pipeline import Pipeline
 from .instance import Instance

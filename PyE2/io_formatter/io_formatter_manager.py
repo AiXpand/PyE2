@@ -23,9 +23,10 @@ Copyright 2019-2022 Lummetry.AI (Knowledge Investment Group SRL). All Rights Res
 
 
 from time import time
+
+from ..plugins_manager_mixin import _PluginsManagerMixin
 from ..const import PAYLOAD_DATA
-from ..io_formatter.default import Cavi2Formatter, DefaultFormatter, Aixp1Formatter
-from ..io_formatter.mixins import _PluginsManagerMixin
+from ..io_formatter.default import Aixp1Formatter, Cavi2Formatter, DefaultFormatter
 
 
 class IOFormatterWrapper(_PluginsManagerMixin):

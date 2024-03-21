@@ -23,25 +23,26 @@ import json
 import os
 import traceback
 from collections import deque
+from datetime import datetime as dt
 from threading import Thread
 from time import sleep
 from time import time as tm
-from datetime import datetime as dt
 
 from ..bc import DefaultBlockEngine
-from ..const import PAYLOAD_DATA, COMMANDS, HB, STATUS_TYPE, ENVIRONMENT
+from ..const import COMMANDS, ENVIRONMENT, HB, PAYLOAD_DATA, STATUS_TYPE
 from ..const import comms as comm_ct
+from ..decentra_object import DecentraObject
 from ..io_formatter import IOFormatterWrapper
+from ..logging import Logger
 from ..utils import load_dotenv
 from ..utils.code import CodeUtils
-from .logger import Logger
 from .payload import Payload
 from .pipeline import Pipeline
 
 # TODO: add support for remaining commands from EE
 
 
-class GenericSession(object):
+class GenericSession(DecentraObject):
   """
   A Session is a connection to a communication server which provides the channel to interact with nodes from the AiXpand network.
   A Session manages `Pipelines` and handles all messages received from the communication server.
@@ -141,13 +142,10 @@ class GenericSession(object):
     dotenv_path : str, optional
         Path to the .env file, by default None. If None, the path will be searched in the current working directory and in the directories of the files from the call stack.
     """
-    if log is None:
-      log = Logger(silent=silent, base_folder='_local_cache')
 
-    super(GenericSession, self).__init__()
-
-    # maybe read config from file?
+    # TODO: maybe read config from file?
     self._config = {**self.default_config, **config}
+
     self.log = log
     self.name = name
 
@@ -177,19 +175,23 @@ class GenericSession(object):
 
     self.__close_pipelines = False
 
-    self.formatter_wrapper = IOFormatterWrapper(log, plugin_search_locations=formatter_plugins_locations)
-
     self.sdk_main_loop_thread = Thread(target=self.__main_loop, daemon=True)
+    self.__formatter_plugins_locations = formatter_plugins_locations
 
-    self.__start_blockchain(bc_engine, blockchain_config)
+    self.__bc_engine = bc_engine
+    self.__blockchain_config = blockchain_config
+
     self.__create_user_callback_threads()
-
-    self.startup()
+    super(GenericSession, self).__init__(log=log, DEBUG=silent, create_logger=True)
     return
 
   def startup(self):
+    self.__start_blockchain(self.__bc_engine, self.__blockchain_config)
+    self.formatter_wrapper = IOFormatterWrapper(self.log, plugin_search_locations=self.__formatter_plugins_locations)
+
     self._connect()
     self.__start_main_loop_thread()
+    super(GenericSession, self).startup()
 
   # Message callbacks
   if True:
@@ -850,57 +852,6 @@ class GenericSession(object):
       The hostname of the server.
       """
       return self._config[comm_ct.HOST]
-
-    def P(self, *args, **kwargs):
-      """
-      Call the `Logger.P` method. If using the default Logger, this call will print
-      info to stdout.
-
-      Parameters
-      ----------
-      *args :
-
-      msg : obj
-          The message to pass to the `Logger.P` method. If using the default Logger, this
-          will be the message displayed at the stdout.
-
-      **kwargs :
-
-
-      Returns
-      -------
-
-      """
-      verbosity = kwargs.pop('verbosity', 1)
-      if verbosity > self._verbosity:
-        return
-      self.log.P(*args, **kwargs)
-
-    def D(self, *args, **kwargs):
-      """
-      Call the `Logger.D` method.
-      If using the default Logger, this call will print debug info to stdout if `silent` is set to `False`.
-
-      Parameters
-      ----------
-      *args :
-
-      msg : obj
-          The message to pass to the `Logger.P` method. If using the default Logger, this
-          will be the message displayed at the stdout.
-
-      **kwargs :
-
-
-      Returns
-      -------
-
-      """
-      verbosity = kwargs.pop('verbosity', 1)
-      if verbosity > self._verbosity:
-        return
-      self.log.D(*args, **kwargs)
-      return
 
     def create_pipeline(self, *,
                         e2id,

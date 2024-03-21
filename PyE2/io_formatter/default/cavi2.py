@@ -312,21 +312,3 @@ def process_instance_config(instance_config, sub_dict_key=FORMATTER_DATA.PLUGIN_
     raise ValueError(
         "Unknown type '{}' for instance config".format(type(instance_config)))
   return dct_result
-
-
-if __name__ == '__main__':
-  # from libraries import Logger
-  # log = Logger(lib_name='TSTFMT', base_folder='.',
-  #              app_folder='_solisbox', TF_KERAS=False)
-  # formatter = Cavi2Formatter(log=log, signature='Cavi2')
-
-  # with open('plugins/io_formatters/cavi2-test1.txt', 'rt') as f:
-  #   msg = json.load(f)
-  # s = log.dict_pretty_format(msg)
-  # print(s)
-  # res = formatter.decode_streams({x['NAME']: x for x in msg['data']})
-  # msg = {} ## put your message here to check the formatter
-  # enc_msg, _ = formatter.encode_output(msg)
-  # enc_msg['EE_FORMATTER'] = 'cavi2'
-  # dec_msg = formatter.decode_output(enc_msg)
-  pass
