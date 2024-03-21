@@ -8,5 +8,5 @@ from .PyE2 import io_formatter as pye2_io_formatter
 from .PyE2 import utils as pye2_utils
 from .PyE2.utils import load_dotenv
 from .PyE2 import __version__
-from .PyE2 import DecentraObject, _PluginsManagerMixin, Logger, SBLogger
+from .PyE2 import DecentraObject, _PluginsManagerMixin, Logger
 from .PyE2 import BaseCodeChecker

@@ -19,21 +19,20 @@ Copyright 2019 Lummetry.AI (Knowledge Investment Group SRL). All Rights Reserved
 @description:
 """
 
-from functools import partial
 from .base_logger import BaseLogger
-from .logger_mixins import (
-  _TimersMixin,
-  _DateTimeMixin,
-  _GeneralSerializationMixin,
-  _JSONSerializationMixin,
-  _PickleSerializationMixin,
-  _DownloadMixin,
-  _UploadMixin,
-  _ProcessMixin,
-  _ClassInstanceMixin,
-  _ResourceSizeMixin,
-  _UtilsMixin
-)
+from .logger_mixins import (_ClassInstanceMixin,
+                            _DateTimeMixin,
+                            _DownloadMixin,
+                            _GeneralSerializationMixin,
+                            _JSONSerializationMixin,
+                            _PickleSerializationMixin,
+                            _ProcessMixin,
+                            _ResourceSizeMixin,
+                            _TimersMixin,
+                            _UploadMixin,
+                            _UtilsMixin
+                            )
+
 
 class Logger(
   BaseLogger,
@@ -82,19 +81,6 @@ class Logger(
       check_additional_configs=check_additional_configs,
       default_color=default_color,
     )
-
-    how_runs = ''
-    if self.runs_from_ipython():
-      how_runs = ' running in ipython'
-    if self.runs_with_debugger():
-      how_runs = ' running in debug mode'
-    self.verbose_log(
-        "  Python {}{}".format(
-          self.python_version,
-          how_runs,
-        ), color='green'
-      )
-
     self.cleanup_logs(archive_older_than_days=2)
 
     return
@@ -120,7 +106,6 @@ class Logger(
 
     return f"{class_name}({properties_str})"
 
-SBLogger = partial(Logger, lib_name='tst', base_folder='.', app_folder='_local_cache')
 
 if __name__ == '__main__':
   l = Logger('TEST', base_folder='Dropbox', app_folder='_libraries_testdata')

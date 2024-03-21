@@ -8,5 +8,5 @@ from ._ver import __VER__ as version
 from ._ver import __VER__ as __version__
 from .decentra_object import DecentraObject
 from .plugins_manager_mixin import _PluginsManagerMixin
-from .logging import Logger, SBLogger
+from .logging import Logger
 from .code_cheker import BaseCodeChecker
