@@ -311,7 +311,7 @@ class _DateTimeMixin(object):
 
 
 if __name__ == '__main__':
-  from pye2 import Logger
+  from PyE2 import Logger
   log = Logger(
     'gigi',
     base_folder='.',
