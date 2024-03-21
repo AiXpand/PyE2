@@ -1,7 +1,7 @@
 from os import environ
 
 def is_debug_mode():
-  return environ.get('LOGGER_DEBUG', '0') == '1'
+  return environ.get('LOGGER_DEBUG', '1') == '1' # TODO: remove default to '1' when the logger is ready
 
 def maybe_print(msg):
   """
