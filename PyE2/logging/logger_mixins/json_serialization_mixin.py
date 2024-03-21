@@ -140,10 +140,10 @@ class NPJson(json.JSONEncoder):
 
 class _JSONSerializationMixin(object):
   """
-  Mixin for json serialization functionalities that are attached to `libraries.logger.Logger`.
+  Mixin for json serialization functionalities that are attached to `pye2.Logger`.
 
   This mixin cannot be instantiated because it is built just to provide some additional
-  functionalities for `libraries.logger.Logger`
+  functionalities for `pye2.Logger`
 
   In this mixin we can use any attribute/method of the Logger.
   """

@@ -39,10 +39,10 @@ _OBSOLETE_SECTION_TIME = 3*60 # sections older than 1 hour are archived
 
 class _TimersMixin(object):
   """
-  Mixin for timers functionalities that are attached to `libraries.logger.Logger`.
+  Mixin for timers functionalities that are attached to `pye2.Logger`.
 
   This mixin cannot be instantiated because it is built just to provide some additional
-  functionalities for `libraries.logger.Logger`
+  functionalities for `pye2.Logger`
 
   In this mixin we can use any attribute/method of the Logger.
   """

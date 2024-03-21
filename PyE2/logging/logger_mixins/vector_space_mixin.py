@@ -24,12 +24,12 @@ from time import time as tm
 
 class _VectorSpaceMixin(object):
   """
-  Mixin for vector space functionalities that are attached to `libraries.logger.Logger`:
+  Mixin for vector space functionalities that are attached to `pye2.Logger`:
     - embeddings
     - co-occurence matrix
 
   This mixin cannot be instantiated because it is built just to provide some additional
-  functionalities for `libraries.logger.Logger`
+  functionalities for `pye2.Logger`
 
   In this mixin we can use any attribute/method of the Logger.
 

@@ -5,7 +5,7 @@ def is_debug_mode():
 
 def maybe_print(msg):
   """
-  This method was added for the libraries user to be able to ignore the debug messages
+  This method was added for the pye2 user to be able to ignore the debug messages
   by setting the "LOGGER_DEBUG" environment variable to '1'.
   Parameters
   ----------
