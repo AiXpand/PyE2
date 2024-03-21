@@ -6,7 +6,7 @@ from .default import Session
 from .utils import code_to_base64, load_dotenv
 from ._ver import __VER__ as version
 from ._ver import __VER__ as __version__
-from .decentra_object import DecentraObject
+from .base_decentra_object import BaseDecentraObject
 from .plugins_manager_mixin import _PluginsManagerMixin
 from .logging import Logger
 from .code_cheker import BaseCodeChecker

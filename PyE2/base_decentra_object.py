@@ -22,10 +22,9 @@ Copyright 2019 Lummetry.AI (Knowledge Investment Group SRL). All Rights Reserved
 
 
 from .logging import Logger
-from collections import deque
 
 
-class DecentraObject(object):
+class BaseDecentraObject(object):
   """
   Generic class
 
@@ -47,11 +46,10 @@ class DecentraObject(object):
                DEBUG=False,
                show_prefixes=False,
                prefix_log=None,
-               maxlen_notifications=None,
                log_at_startup=False,
                **kwargs):
 
-    super(DecentraObject, self).__init__()
+    super(BaseDecentraObject, self).__init__()
 
     if (log is None) or not hasattr(log, '_logger'):
       if not create_logger:
