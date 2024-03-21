@@ -182,7 +182,7 @@ class GenericSession(DecentraObject):
     self.__blockchain_config = blockchain_config
 
     self.__create_user_callback_threads()
-    super(GenericSession, self).__init__(log=log, DEBUG=silent, create_logger=True)
+    super(GenericSession, self).__init__(log=log, DEBUG=not silent, create_logger=True)
     return
 
   def startup(self):

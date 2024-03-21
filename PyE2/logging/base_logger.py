@@ -189,14 +189,13 @@ class BaseLogger(object):
       ),
       color='green'
     )
-    self.verbose_log("  Logger v{}.".format(self.__version__),color='green')
     self.verbose_log("  Timezone: {}.".format(self.timezone),color='green')
 
 
     if self.DEBUG:
       self.P('  DEBUG is enabled in Logger', color='g')
     else:
-      self.P('  WARNING: Debug is NOT enabled in Logger, some functionalities are DISABLED', color='r')
+      self.P('  WARNING: Debug is NOT enabled in Logger, some functionalities are DISABLED', color='y')
 
     return
   

@@ -30,7 +30,6 @@ from .logger_mixins import (
   _DownloadMixin,
   _UploadMixin,
   _ProcessMixin,
-  _MachineMixin,
   _ClassInstanceMixin,
   _ResourceSizeMixin,
   _UtilsMixin
@@ -46,7 +45,6 @@ class Logger(
   _DownloadMixin,
   _UploadMixin,
   _ProcessMixin,
-  _MachineMixin,
   _ClassInstanceMixin,
   _ResourceSizeMixin,
   _UtilsMixin):
@@ -54,9 +52,9 @@ class Logger(
   def __init__(self, lib_name="",
                lib_ver="",
                config_file="",
+               config_data={},
                base_folder=None,
                app_folder=None,
-               config_data={},
                show_time=True,
                config_file_encoding=None,
                no_folders_no_save=False,
@@ -65,9 +63,6 @@ class Logger(
                DEBUG=True,
                data_config_subfolder=None,
                check_additional_configs=False,
-               TF_KERAS=False,
-               BENCHMARKER=False,
-               dct_bp_params=None,
                default_color='n',
                ):
 
@@ -94,27 +89,11 @@ class Logger(
     if self.runs_with_debugger():
       how_runs = ' running in debug mode'
     self.verbose_log(
-        "  Python {}{}, Git branch: '{}', Conda: '{}'".format(
+        "  Python {}{}".format(
           self.python_version,
           how_runs,
-          self.git_branch,
-          self.conda_env,
         ), color='green'
       )
-
-    self.verbose_log("  Os: {}".format(self.get_os_name()), color='g')
-    self.verbose_log("  IP: {}".format(self.get_localhost_ip()), color='g')
-
-    self.verbose_log('  Avail/Total RAM: {:.1f} GB / {:.1f} GB'.format(
-      self.get_avail_memory(), self.get_machine_memory()
-    ), color='green')
-
-    if BENCHMARKER:
-      dct_bp_params = dct_bp_params or {}
-      self._setup_benchmarker(**dct_bp_params)
-
-    if TF_KERAS:
-      self.check_tf()
 
     self.cleanup_logs(archive_older_than_days=2)
 

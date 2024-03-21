@@ -1,5 +1,7 @@
 from os import environ
 
+def is_debug_mode():
+  return environ.get('LOGGER_DEBUG', '0') == '1'
 
 def maybe_print(msg):
   """
@@ -10,7 +12,7 @@ def maybe_print(msg):
   msg - str
     The message to be printed
   """
-  if environ.get('LOGGER_DEBUG', '0') == '1':
+  if is_debug_mode():
     print(msg)
   return
 
@@ -37,5 +39,8 @@ if not __logger_can_use_full_logger:
     )
 
 if not __logger_can_use_full_logger and not __logger_can_use_small_logger:
-  raise ImportError("Failed to import Logger class from any of the available sources."
-                    "Set Environment Variable \"LOGGER_DEBUG\" to '1' to see the missing packages.")
+  if is_debug_mode():
+    raise ImportError("Failed to import Logger class from any of the available sources.")
+  else:
+    raise ImportError("Failed to import Logger class from any of the available sources."
+                      "Set Environment Variable \"LOGGER_DEBUG\" to '1' to see the missing packages.")
