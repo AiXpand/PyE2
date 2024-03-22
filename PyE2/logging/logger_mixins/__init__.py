@@ -1,4 +1,5 @@
 from .class_instance_mixin import _ClassInstanceMixin
+from .computer_vision_mixin import _ComputerVisionMixin
 from .datetime_mixin import _DateTimeMixin
 from .download_mixin import _DownloadMixin
 from .general_serialization_mixin import _GeneralSerializationMixin

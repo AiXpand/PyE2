@@ -21,6 +21,7 @@ Copyright 2019 Lummetry.AI (Knowledge Investment Group SRL). All Rights Reserved
 
 from .base_logger import BaseLogger
 from .logger_mixins import (_ClassInstanceMixin,
+                            _ComputerVisionMixin,
                             _DateTimeMixin,
                             _DownloadMixin,
                             _GeneralSerializationMixin,
@@ -36,16 +37,17 @@ from .logger_mixins import (_ClassInstanceMixin,
 
 class Logger(
   BaseLogger,
-  _TimersMixin,
+  _ClassInstanceMixin,
+  _ComputerVisionMixin,
   _DateTimeMixin,
+  _DownloadMixin,
   _GeneralSerializationMixin,
   _JSONSerializationMixin,
   _PickleSerializationMixin,
-  _DownloadMixin,
-  _UploadMixin,
   _ProcessMixin,
-  _ClassInstanceMixin,
   _ResourceSizeMixin,
+  _TimersMixin,
+  _UploadMixin,
   _UtilsMixin):
 
   def __init__(self, lib_name="",
