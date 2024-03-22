@@ -31,7 +31,7 @@ from time import time as tm
 from ..bc import DefaultBlockEngine
 from ..const import COMMANDS, ENVIRONMENT, HB, PAYLOAD_DATA, STATUS_TYPE
 from ..const import comms as comm_ct
-from ..base_decentra_object import BaseDecentraObject
+from ..base_decentra_object import BaseDecentrAIObject
 from ..io_formatter import IOFormatterWrapper
 from ..logging import Logger
 from ..utils import load_dotenv
@@ -42,7 +42,7 @@ from .pipeline import Pipeline
 # TODO: add support for remaining commands from EE
 
 
-class GenericSession(BaseDecentraObject):
+class GenericSession(BaseDecentrAIObject):
   """
   A Session is a connection to a communication server which provides the channel to interact with nodes from the AiXpand network.
   A Session manages `Pipelines` and handles all messages received from the communication server.

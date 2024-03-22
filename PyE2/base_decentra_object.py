@@ -24,7 +24,7 @@ Copyright 2019 Lummetry.AI (Knowledge Investment Group SRL). All Rights Reserved
 from .logging import Logger
 
 
-class BaseDecentraObject(object):
+class BaseDecentrAIObject(object):
   """
   Generic class
 
@@ -49,7 +49,7 @@ class BaseDecentraObject(object):
                log_at_startup=False,
                **kwargs):
 
-    super(BaseDecentraObject, self).__init__()
+    super(BaseDecentrAIObject, self).__init__()
 
     if (log is None) or not hasattr(log, '_logger'):
       if not create_logger:
