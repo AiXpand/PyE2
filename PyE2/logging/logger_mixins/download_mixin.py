@@ -190,6 +190,7 @@ class _DownloadMixin(object):
       # Check if the file already exists, otherwise we need to download it now.
       has_file = os.path.exists(save_path)
       if not has_file or force_download:
+        file_path = None
         # handle http standard download
         # automatically add .zip in this corner case
         if unzip and not save_path.endswith('.zip'):
@@ -243,21 +244,22 @@ class _DownloadMixin(object):
         else:
           self.P("ERROR: unknown url type: {}".format(_url), color='error')
 
-        if unzip:
-          _directory_to_extract_to = os.path.splitext(save_path)[0]
-          if verbose:
-            self.P("Unzipping '...{}' ...".format(file_path[-40:]))
-          if not os.path.exists(_directory_to_extract_to):
-            os.makedirs(_directory_to_extract_to)
+        if file_path is not None:
+          if unzip:
+            _directory_to_extract_to = os.path.splitext(save_path)[0]
+            if verbose:
+              self.P("Unzipping '...{}' ...".format(file_path[-40:]))
+            if not os.path.exists(_directory_to_extract_to):
+              os.makedirs(_directory_to_extract_to)
 
-          with zipfile.ZipFile(file_path, 'r') as zip_ref:
-            zip_ref.extractall(_directory_to_extract_to)
+            with zipfile.ZipFile(file_path, 'r') as zip_ref:
+              zip_ref.extractall(_directory_to_extract_to)
 
-          # remove the downloaded zip file as it was already extracted, so it occupies space without any use
-          os.remove(file_path)
-          saved_files.append(_directory_to_extract_to)
-        else:
-          saved_files.append(file_path)
+            # remove the downloaded zip file as it was already extracted, so it occupies space without any use
+            os.remove(file_path)
+            saved_files.append(_directory_to_extract_to)
+          else:
+            saved_files.append(file_path)
 
       else:
         if verbose:
