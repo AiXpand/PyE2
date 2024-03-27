@@ -10,7 +10,7 @@ authors = [
   { name="Andrei Ionut Damian", email="andrei.damian@lummetry.ai" },
   { name="Cristan Bleotiu", email="cristan.bleotiu@hyperfy.tech" },
 ]
-description = "PyE2 is the Python SDK required for client app development in the AiXpand network"
+description = "PyE2 is the Python SDK required for client app development in the DecentrAI network"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -29,5 +29,5 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/AiXpand/PyE2"
-"Bug Tracker" = "https://github.com/AiXpand/PyE2/issues"
+"Homepage" = "https://github.com/DecentrAI/PyE2"
+"Bug Tracker" = "https://github.com/DecentrAI/PyE2/issues"

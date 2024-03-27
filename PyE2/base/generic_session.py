@@ -23,7 +23,7 @@ from .pipeline import Pipeline
 
 class GenericSession(BaseDecentrAIObject):
   """
-  A Session is a connection to a communication server which provides the channel to interact with nodes from the AiXpand network.
+  A Session is a connection to a communication server which provides the channel to interact with nodes from the DecentrAI network.
   A Session manages `Pipelines` and handles all messages received from the communication server.
   The Session handles all callbacks that are user-defined and passed as arguments in the API calls.  
   """
@@ -70,7 +70,7 @@ class GenericSession(BaseDecentrAIObject):
                formatter_plugins_locations=['plugins.io_formatters'],
                **kwargs) -> None:
     """
-    A Session is a connection to a communication server which provides the channel to interact with nodes from the AiXpand network.
+    A Session is a connection to a communication server which provides the channel to interact with nodes from the DecentrAI network.
     A Session manages `Pipelines` and handles all messages received from the communication server.
     The Session handles all callbacks that are user-defined and passed as arguments in the API calls.  
 
@@ -85,8 +85,8 @@ class GenericSession(BaseDecentrAIObject):
     pwd : str, optional
         The password. If None, it will be retrieved from the environment variable AIXP_PASSWORD
     name : str, optional
-        The name of this connection, used to identify owned pipelines on a specific AiXpand node.
-        The name will be used as `INITIATOR_ID` and `SESSION_ID` when communicating with AiXp nodes, by default 'pySDK'
+        The name of this connection, used to identify owned pipelines on a specific DecentrAI node.
+        The name will be used as `INITIATOR_ID` and `SESSION_ID` when communicating with DecentrAI nodes, by default 'pySDK'
     config : dict, optional
         Configures the names of the channels this session will connect to.
         If using a Mqtt server, these channels are in fact topics.
@@ -296,7 +296,7 @@ class GenericSession(BaseDecentrAIObject):
       Parameters
       ----------
       e2id : str
-          The name of the AiXpand node that sent the message.
+          The name of the DecentrAI node that sent the message.
 
       Returns
       -------
@@ -312,7 +312,7 @@ class GenericSession(BaseDecentrAIObject):
       Parameters
       ----------
       e2id : str
-          The name of the AiXpand node that sent the message.
+          The name of the DecentrAI node that sent the message.
       """
       self._last_seen_boxes[e2id] = tm()
       self._box_addr[e2id] = ee_address
@@ -327,7 +327,7 @@ class GenericSession(BaseDecentrAIObject):
       dict_msg : dict
           The message received from the communication server
       msg_eeid : str
-          The name of the AiXpand node that sent the message.
+          The name of the DecentrAI node that sent the message.
       msg_pipeline : str
           The name of the pipeline that sent the message.
       msg_signature : str
@@ -373,7 +373,7 @@ class GenericSession(BaseDecentrAIObject):
       dict_msg : dict
           The message received from the communication server
       msg_eeid : str
-          The name of the AiXpand node that sent the message.
+          The name of the DecentrAI node that sent the message.
       msg_pipeline : str
           The name of the pipeline that sent the message.
       msg_signature : str
@@ -427,7 +427,7 @@ class GenericSession(BaseDecentrAIObject):
       dict_msg : dict
           The message received from the communication server
       msg_eeid : str
-          The name of the AiXpand node that sent the message.
+          The name of the DecentrAI node that sent the message.
       msg_pipeline : str
           The name of the pipeline that sent the message.
       msg_signature : str
@@ -550,7 +550,7 @@ class GenericSession(BaseDecentrAIObject):
       Parameters
       ----------
       to : str
-          The name of the AiXpand node that will receive the payload.
+          The name of the DecentrAI node that will receive the payload.
       payload : dict
           The payload to send.
       """
@@ -659,26 +659,26 @@ class GenericSession(BaseDecentrAIObject):
 
       user = user or os.getenv(ENVIRONMENT.AIXP_USERNAME) or os.getenv(ENVIRONMENT.AIXP_USER)
       if user is None:
-        raise ValueError("Error: No user specified for AiXpand network connection")
+        raise ValueError("Error: No user specified for DecentrAI network connection")
       if self._config.get(comm_ct.USER, None) is None:
         self._config[comm_ct.USER] = user
 
       pwd = pwd or os.getenv(ENVIRONMENT.AIXP_PASSWORD) or os.getenv(
         ENVIRONMENT.AIXP_PASS) or os.getenv(ENVIRONMENT.AIXP_PWD)
       if pwd is None:
-        raise ValueError("Error: No password specified for AiXpand network connection")
+        raise ValueError("Error: No password specified for DecentrAI network connection")
       if self._config.get(comm_ct.PASS, None) is None:
         self._config[comm_ct.PASS] = pwd
 
       host = host or os.getenv(ENVIRONMENT.AIXP_HOSTNAME) or os.getenv(ENVIRONMENT.AIXP_HOST)
       if host is None:
-        raise ValueError("Error: No host specified for AiXpand network connection")
+        raise ValueError("Error: No host specified for DecentrAI network connection")
       if self._config.get(comm_ct.HOST, None) is None:
         self._config[comm_ct.HOST] = host
 
       port = port or os.getenv(ENVIRONMENT.AIXP_PORT)
       if port is None:
-        raise ValueError("Error: No port specified for AiXpand network connection")
+        raise ValueError("Error: No port specified for DecentrAI network connection")
       if self._config.get(comm_ct.PORT, None) is None:
         self._config[comm_ct.PORT] = int(port)
       return
@@ -692,7 +692,7 @@ class GenericSession(BaseDecentrAIObject):
       command : str
           The command to send.
       worker : str
-          The name of the AiXpand node that will receive the command.
+          The name of the DecentrAI node that will receive the command.
       payload : dict
           The payload to send.
       show_command : bool, optional
@@ -859,14 +859,14 @@ class GenericSession(BaseDecentrAIObject):
 
         `Plugin` == `Signature`
 
-      This call can busy-wait for a number of seconds to listen to heartbeats, in order to check if an AiXpand node is online or not.
+      This call can busy-wait for a number of seconds to listen to heartbeats, in order to check if an DecentrAI node is online or not.
       If the node does not appear online, a warning will be displayed at the stdout, telling the user that the message that handles the
       creation of the pipeline will be sent, but it is not guaranteed that the specific node will receive it.
 
       Parameters
       ----------
       e2id : str
-          Name of the AiXpand node that will handle this pipeline.
+          Name of the DecentrAI node that will handle this pipeline.
       name : str
           Name of the pipeline. This is good to be kept unique, as it allows multiple parties to overwrite each others configurations.
       data_source : str
@@ -930,7 +930,7 @@ class GenericSession(BaseDecentrAIObject):
 
     def get_active_nodes(self):
       """
-      Get the list of all AiXp nodes that sent a message since this session was created, and that are considered online
+      Get the list of all DecentrAI nodes that sent a message since this session was created, and that are considered online
 
       Parameters
       ----------
@@ -938,19 +938,19 @@ class GenericSession(BaseDecentrAIObject):
       Returns
       -------
       list
-          List of names of all the AiXp nodes that are considered online
+          List of names of all the DecentrAI nodes that are considered online
 
       """
       return [k for k, v in self._last_seen_boxes.items() if tm() - v < self.online_timeout]
 
     def get_active_pipelines(self, e2id):
       """
-      Get a dictionary with all the pipelines that are active on this AiXp node
+      Get a dictionary with all the pipelines that are active on this DecentrAI node
 
       Parameters
       ----------
       e2id : str
-          name of the AiXp node
+          name of the DecentrAI node
 
       Returns
       -------
@@ -968,7 +968,7 @@ class GenericSession(BaseDecentrAIObject):
                            max_wait_time=0,
                            **kwargs) -> Pipeline:
       """
-      Create a Pipeline object and attach to an existing pipeline on an AiXpand node.
+      Create a Pipeline object and attach to an existing pipeline on an DecentrAI node.
       Useful when one wants to treat an existing pipeline as one of his own,
       or when one wants to attach callbacks to various events (on_data, on_notification).
 
@@ -986,7 +986,7 @@ class GenericSession(BaseDecentrAIObject):
 
         `Plugin` == `Signature`
 
-      This call can busy-wait for a number of seconds to listen to heartbeats, in order to check if an AiXpand node is online or not.
+      This call can busy-wait for a number of seconds to listen to heartbeats, in order to check if an DecentrAI node is online or not.
       If the node does not appear online, a warning will be displayed at the stdout, telling the user that the message that handles the
       creation of the pipeline will be sent, but it is not guaranteed that the specific node will receive it.
 
@@ -994,7 +994,7 @@ class GenericSession(BaseDecentrAIObject):
       Parameters
       ----------
       e2id : str
-          Name of the AiXpand node that handles this pipeline.  
+          Name of the DecentrAI node that handles this pipeline.  
       name : str
           Name of the existing pipeline.
       on_data : Callable[[Pipeline, str, str, dict], None], optional

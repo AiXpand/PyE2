@@ -147,7 +147,7 @@ class Instance():
       config : dict, optional
           The new configuration of the instance, by default {}
       send_command : bool, optional
-          If True, this method will send the update command to the AiXpand node,
+          If True, this method will send the update command to the DecentrAI node,
           otherwise it will return the update config dictionary that can be sent using `pipeline.batch_update_instances`,
           by default True
 

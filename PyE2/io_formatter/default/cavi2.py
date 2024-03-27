@@ -84,8 +84,8 @@ class Cavi2Formatter(BaseFormatter):
         'internetTime': '',
     }
     sender = {
-        'id': "AiXp-ExecutionEngine",
-        'instanceId': "AiXp-EE-v" + ee_version,
+        'id': "DecentrAI-ExecutionEngine",
+        'instanceId': "DecentrAI-EE-v" + ee_version,
         "hostId": output.pop('EE_ID')
     }
 

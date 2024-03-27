@@ -8,7 +8,7 @@ import numpy as np
 class Payload(UserDict):
   """
   This class enriches the default python dict, providing
-  helpful methods to process the payloads received from AiXp nodes.
+  helpful methods to process the payloads received from DecentrAI nodes.
   """
 
   def get_image_as_np(self, key='IMG'):
